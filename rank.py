@@ -1,19 +1,23 @@
+import os
 import requests
 
-RIOT_NAME = "Hidrann"
-RIOT_TAG = "832"
-REGION = "eu"
+API_KEY = "HDEV-9b362ce3-7204-4262-b3c9-8b81091be63e"
 
-url = f"https://api.henrikdev.xyz/valorant/v1/mmr/{REGION}/{RIOT_NAME}/{RIOT_TAG}"
+url = "https://api.henrikdev.xyz/valorant/v2/mmr/eu/Hidrann/832"
+headers = {"Authorization": API_KEY}
 
-data = requests.get(url).json()
+res = requests.get(url, headers=headers).json()
 
-rank = data["data"]["currenttierpatched"]
-rr = data["data"]["ranking_in_tier"]
+if "data" in res:
+    current = res["data"]["current_data"]
 
-text = f"🔥 {rank} - {rr} RR"
+    text = f"{current['currenttierpatched']} - {current['ranking_in_tier']} RR"
 
-with open("rank.txt", "w", encoding="utf-8") as f:
-    f.write(text)
+    path = os.path.join(os.path.dirname(__file__), "rank.txt")
 
-print(text)
+    with open(path, "w", encoding="utf-8") as f:
+        f.write(text)
+
+    print(text)
+else:
+    print("Erreur API :", res)
